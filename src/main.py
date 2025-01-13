@@ -9,10 +9,9 @@ from PyQt5.QtWidgets import QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QPainter, QPen
 import numpy as np
-import pandas as pd
 
 from simulated_data import create_simulated_data
-from src.nnclr import fit_nnclr_model, get_similarities, prepare_model_to_load
+from nnclr import fit_nnclr_model, get_similarities, prepare_model_to_load
 
 
 class QSelectableLabel(QLabel):
@@ -58,6 +57,7 @@ class ThumbnailWidget(QLabel):
         self.color = color
 
         # Create pixmap for drawing
+
         self.thumbnail_pixmap = QPixmap(self.size())
         self.plot_thumbnail()
 

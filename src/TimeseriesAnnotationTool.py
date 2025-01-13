@@ -153,6 +153,9 @@ class TimeseriesAnnotationTool(QMainWindow):
         self.drag_start_x = None
         self.selected_index = self.unique_index[0]
 
+        # Create span selectors for all subplots
+        self.span_selectors = []    
+        
         # Initialize plot data with the first index
         self.plot_data(self.selected_index)
 
@@ -161,14 +164,7 @@ class TimeseriesAnnotationTool(QMainWindow):
             canvas.mpl_connect('button_press_event', self.on_click)
             canvas.mpl_connect('motion_notify_event', self.on_drag)
             canvas.mpl_connect('button_release_event', self.on_release)
-            canvas.mpl_connect('button_press_event', self.on_click)
-
-        # Create span selectors for all subplots
-        self.span_selectors = []
-        for ax in self.axes:
-            ss = SpanSelector(ax, self.on_span_select, 'horizontal', interactive=True, useblit=True,
-                              onmove_callback=self.update_span)
-            self.span_selectors.append(ss)
+            canvas.mpl_connect('button_press_event', self.on_click)        
 
         self.load_annotations()
 
@@ -188,6 +184,7 @@ class TimeseriesAnnotationTool(QMainWindow):
             self.scroll_layout.removeWidget(fig_canvas)
             fig_canvas.deleteLater()
         self.figures.clear()
+        self.axes.clear()
 
         if index is not None:
             selected_row = self.time_series_df.loc[index]
@@ -196,6 +193,8 @@ class TimeseriesAnnotationTool(QMainWindow):
                 # Create a new figure and canvas for each column
                 fig, ax = plt.subplots(figsize=(8, 4))
                 canvas = FigureCanvas(fig)
+                canvas.setFixedSize(800, 400)  # Set fixed size for the canvas to match figsize
+
                 self.figures.append(canvas)
 
                 # Plot data for the current column
@@ -206,10 +205,12 @@ class TimeseriesAnnotationTool(QMainWindow):
                 ax.legend()
                 ax.grid(True)
 
-
-
                 # Add the canvas to the scrollable layout
                 self.scroll_layout.addWidget(canvas)
+                self.axes.append(ax)
+                ss = SpanSelector(ax, self.on_span_select, 'horizontal', interactive=True, useblit=True,
+                              onmove_callback=self.update_span)
+                self.span_selectors.append(ss)
 
         # Update the layout
         self.scroll_content.setLayout(self.scroll_layout)

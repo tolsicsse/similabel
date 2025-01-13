@@ -44,8 +44,8 @@ def convert_label_data_to_annotations(label_data, time_column, label_cols):
         risk_value = group_df['risk_evaluation'].iloc[0]
 
         # Get the x_min (start_time min) and x_max (start_time max) for the group
-        x_min = group_df[time_column].min()
-        x_max = group_df[time_column].max()
+        x_min = int(group_df[time_column].min())
+        x_max = int(group_df[time_column].max())
 
         # Create the annotation dictionary
         annotation = {
